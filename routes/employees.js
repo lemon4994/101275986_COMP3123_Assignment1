@@ -1,20 +1,41 @@
 const express = require("express")
 const EmployeeModel = require("../models/employees")
-
 const routes = express.Router()
 
-
-app.get('/api/v1/emp/employees', (req, res) => {
-    res.status(200)
-    res.send('<h1>List of all employees</h1>')
+//Lists all Employees
+routes.get('/employees', (req, res) => {
+    EmployeeModel.find()
+        .then((employees) => {
+            res.status(200).send(employees)
+        }).catch((err) => {
+            res.status(500).send({message: err.message})
+        })
+    //res.status(200)
+    //res.send('<h1>List of all employees</h1>')
 })
 
-app.post('/api/v1/emp/employees', (req, res) => {
-    res.status(201)
-    res.send('<h1>Create an employee</h1>')
+//Create a new Employee
+routes.post('/employees', async (req, res) => {
+    const employeeData = req.body
+    console.log(employeeData)
+    try {
+        // Create a new employee instance
+        const employee = new EmployeeModel(employeeData)
+        // Save the employee to MongoDB
+        const newEmployee = await employee.save()
+        res.status(201).send({
+            message: "Employee created successfully.",
+            employee_id: newEmployee._id
+        })
+    } catch (err) {
+        res.status(500).send({message: err.message})
+    } 
+    //res.status(201)
+    //res.send('<h1>Create an employee</h1>')
 })
 
-app.get('/api/v1/emp/employees/', (req, res) => {
+//Get specific Employee by ID
+routes.get('/employees/', (req, res) => {
     res.status(200)
     console.log(req.query);
     let employee_id = req.query.employee_id || "0" //default params
@@ -22,7 +43,8 @@ app.get('/api/v1/emp/employees/', (req, res) => {
     res.json({ employee_id });
 })
 
-app.put('/api/v1/emp/employees/:employee_id', (req, res) => {
+//Update an Employees details
+routes.put('/employees/:employee_id', (req, res) => {
     res.status(200)
     console.log(req.query);
     let employee_id = req.query.employee_id
@@ -30,10 +52,13 @@ app.put('/api/v1/emp/employees/:employee_id', (req, res) => {
     res.json({ employee_id })
 })
 
-app.delete('api/v1/emp/employees/:employee_id', (req, res) => {
+//Delete an Employee
+routes.delete('/employees/:employee_id', (req, res) => {
     res.status(204)
     console.log(req.query)
     let employee_id = req.query.employee_id
 
     res.json({ employee_id})
 })
+
+module.exports = routes

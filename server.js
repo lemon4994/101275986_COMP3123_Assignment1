@@ -18,8 +18,8 @@ mongoose.connect(DB_CONNECTION_STRING, {
 app.use(express.json())
 app.use(express.urlencoded())
 
-app.use("/api/v1", employeesRoutes)
-app.use("/api/v1", usersRoutes)
+app.use("/api/v1/emp", employeesRoutes)
+app.use("/api/v1/user", usersRoutes)
 
 app.get('/', (req, res) => {
     res.send("<h1>Assignment 1</h1>")
