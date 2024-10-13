@@ -35,12 +35,17 @@ routes.post('/employees', async (req, res) => {
 })
 
 //Get specific Employee by ID
-routes.get('/employees/', (req, res) => {
-    res.status(200)
-    console.log(req.query);
-    let employee_id = req.query.employee_id || "0" //default params
-    
-    res.json({ employee_id });
+routes.get('/employees/:employeeid', (req, res) => {
+    EmployeeModel.findById(req.params.employeeid)
+    .then((employee) => {
+        if(employee) {
+            res.status(200).send(employee)
+        } else {
+            res.status(404).send({message: "Employee not found"})
+        }
+    }).catch((err) => {
+        res.status(500).send({message: err.message})
+    })
 })
 
 //Update an Employees details
