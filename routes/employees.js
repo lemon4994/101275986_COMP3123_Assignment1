@@ -6,9 +6,9 @@ const routes = express.Router()
 routes.get('/employees', (req, res) => {
     EmployeeModel.find()
         .then((employees) => {
-            res.status(200).send(employees)
+            res.status(200).json(employees)
         }).catch((err) => {
-            res.status(500).send({message: err.message})
+            res.status(500).json({message: err.message})
         })
     //res.status(200)
     //res.send('<h1>List of all employees</h1>')
@@ -23,12 +23,12 @@ routes.post('/employees', async (req, res) => {
         const employee = new EmployeeModel(employeeData)
         // Save the employee to MongoDB
         const newEmployee = await employee.save()
-        res.status(201).send({
+        res.status(201).json({
             message: "Employee created successfully.",
             employee_id: newEmployee._id
         })
     } catch (err) {
-        res.status(500).send({message: err.message})
+        res.status(500).json({message: err.message})
     } 
     //res.status(201)
     //res.send('<h1>Create an employee</h1>')
@@ -39,12 +39,12 @@ routes.get('/employees/:employeeid', (req, res) => {
     EmployeeModel.findById(req.params.employeeid)
     .then((employee) => {
         if(employee) {
-            res.status(200).send(employee)
+            res.status(200).json(employee)
         } else {
-            res.status(404).send({message: "Employee not found"})
+            res.status(404).json({message: "Employee not found"})
         }
     }).catch((err) => {
-        res.status(500).send({message: err.message})
+        res.status(500).json({message: err.message})
     })
 })
 
@@ -60,15 +60,15 @@ routes.put('/employees/:employee_id', async (req, res) => {
             { new: true }
         )
         if(!updateEmployee) {
-            return res.status(404).send({ message: "Employee not found" })
+            return res.status(404).json({ message: "Employee not found" })
         }
         
-        res.status(200).send({
+        res.status(200).json({
             message: "Employee details updated successfully.",
             employee: updateEmployee
         })
     } catch (err) {
-        res.status(500).send({message: err.message})
+        res.status(500).json({message: err.message})
     }
     //res.status(200)
     //console.log(req.query);
@@ -83,12 +83,12 @@ routes.delete('/employees/:employee_id', (req, res) => {
     .then((employee) => {
         if(employee) {
             console.log("Employee deleted successfully")
-            res.status(204).send({"message": "Employee deleted successfully"})
+            res.status(204).json({"message": "Employee deleted successfully"})
         } else {
-            res.status(404).send({message: "Employee not found"})
+            res.status(404).json({message: "Employee not found"})
         }
     }).catch((err) => {
-        res.status(500).send({message: err.message})
+        res.status(500).json({message: err.message})
     })
 
     //res.json({ employee_id})
