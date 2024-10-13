@@ -79,11 +79,19 @@ routes.put('/employees/:employee_id', async (req, res) => {
 
 //Delete an Employee
 routes.delete('/employees/:employee_id', (req, res) => {
-    res.status(204)
-    console.log(req.query)
-    let employee_id = req.query.employee_id
+    EmployeeModel.findByIdAndDelete(req.params.employee_id)
+    .then((employee) => {
+        if(employee) {
+            console.log("Employee deleted successfully")
+            res.status(204).send({"message": "Employee deleted successfully"})
+        } else {
+            res.status(404).send({message: "Employee not found"})
+        }
+    }).catch((err) => {
+        res.status(500).send({message: err.message})
+    })
 
-    res.json({ employee_id})
+    //res.json({ employee_id})
 })
 
 module.exports = routes
