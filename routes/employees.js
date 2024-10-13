@@ -49,12 +49,32 @@ routes.get('/employees/:employeeid', (req, res) => {
 })
 
 //Update an Employees details
-routes.put('/employees/:employee_id', (req, res) => {
-    res.status(200)
-    console.log(req.query);
-    let employee_id = req.query.employee_id
+routes.put('/employees/:employee_id', async (req, res) => {
+    try {
+        const { first_name, last_name, email, position, salary, department } = req.body
+        const employeeId = req.params.employee_id
+        
+        const updateEmployee = await EmployeeModel.findByIdAndUpdate(
+            employeeId,
+            { first_name, last_name, email, position, salary, department, updated_at: Date.now() },
+            { new: true }
+        )
+        if(!updateEmployee) {
+            return res.status(404).send({ message: "Employee not found" })
+        }
+        
+        res.status(200).send({
+            message: "Employee details updated successfully.",
+            employee: updateEmployee
+        })
+    } catch (err) {
+        res.status(500).send({message: err.message})
+    }
+    //res.status(200)
+    //console.log(req.query);
+    //let employee_id = req.query.employee_id
 
-    res.json({ employee_id })
+    //res.json({ employee_id })
 })
 
 //Delete an Employee
